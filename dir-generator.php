@@ -42,11 +42,12 @@ $show_hidden_files = false;
 $calculate_folder_size = false;
 
 // Various file type associations
-$movie_types = array('mpg','mpeg','avi','asf','mp3','wav','mp4','wma','aif','aiff','ram', 'midi','mid','asf','au','flac');
-$image_types = array('jpg','jpeg','gif','png','tif','tiff','bmp','ico');
-$archive_types = array('zip','cab','7z','gz','tar.bz2','tar.gz','tar','rar',);
+$movie_types    = array('mpg','mpeg','avi','asf','mp3','wav','mp4','wma','aif','aiff','ram', 'midi','mid','asf','au','flac');
+$image_types    = array('jpg','jpeg','gif','png','tif','tiff','bmp','ico');
+$archive_types  = array('zip','cab','7z','gz','tar.bz2','tar.gz','tar','rar',);
 $document_types = array('txt','text','doc','docx','abw','odt','pdf','rtf','tex','texinfo',);
-$font_types = array('ttf','otf','abf','afm','bdf','bmf','fnt','fon','mgf','pcf','ttc','tfm','snf','sfd');
+$font_types     = array('ttf','otf','abf','afm','bdf','bmf','fnt','fon','mgf','pcf','ttc','tfm','snf','sfd');
+$hidden_formats = array('md5sum','md5','changelog');
 
 
 // Get the path (cut out the query string from the request_uri)
@@ -143,7 +144,26 @@ function get_file_type($file) {
 	return(strtoupper($ext) . " " . $type);
 }
 
-
+/**
+ *  Dont display files with extension 
+ *  md5sum / md5 or changelog if accompanied by 
+ *  file with any other extension (such as zip)
+ *  
+ * @param  array $f 
+ * @return bool
+ */
+function ignoreFile($f){
+	global $hidden_formats, $filelist;
+	list($name, $ext) = explode(".", $f["name"]);
+	if(!in_array($ext, $hidden_formats)){return false;}
+	$files = array_filter($filelist, function($v) use ($name){
+		global $hidden_formats;
+		list($n, $e) = explode(".", $v["name"]);
+		if(in_array($e, $hidden_formats)){return false;}
+		if(strpos($name, $n) !== false) return true;
+	});
+	return (count($files) > 0); 
+}
 
 // Print the heading stuff
 $vpath = ($path != "./")?$path:"";
@@ -228,7 +248,7 @@ if($handle = @opendir($path)) {
 
 
 if(!isset($_GET['sort'])) {
-	$_GET['sort'] = 'name';
+	$_GET['sort'] = 'modtime';
 }
 
 // Figure out what to sort files by
@@ -244,15 +264,17 @@ foreach ($folderlist as $key=>$row) {
 }
 
 // Order the files and folders
-if($_GET['order']) {
+if(($_GET['order'] && $_GET['order'] == "desc") || (!isset($_GET['order']))) {
 	array_multisort($folder_order_by, SORT_DESC, $folderlist);
 	array_multisort($file_order_by, SORT_DESC, $filelist);
-} else {
+	$order = "&order=asc";
+} 
+
+if($_GET['order'] && $_GET['order'] == "asc"){
 	array_multisort($folder_order_by, SORT_ASC, $folderlist);
 	array_multisort($file_order_by, SORT_ASC, $filelist);
 	$order = "&order=desc";
 }
-
 
 // Show sort methods
 print "<thead><tr>";
@@ -299,8 +321,10 @@ print "<tr><td colspan='4' style='height:7px;'></td></tr>";
 
 
 
+
 // Print file information
-foreach($filelist as $file) {
+foreach($filelist as $file) {	
+	if(ignoreFile($file)) continue;
 	print "<tr><td class='n'><a href='" . addslashes($file['name']). "' onClick=\"ga('send', 'pageview', '" . $vpath . $file['name']. "');\">" .htmlentities($file['name']). "</a></td>";
 	print "<td class='m'>" . date('Y-M-d H:m:s', $file['modtime'])   . "</td>";
 	print "<td class='s'>" . format_bytes($file['size'],2)           . "&nbsp;</td>";
