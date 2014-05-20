@@ -78,7 +78,7 @@ print "<?xml version='1.0' encoding='utf-8'?>
 		a, a:active {text-decoration: none; color: blue;}
 		a:visited {color: #48468F;}
 		a:hover, a:focus {text-decoration: underline; color: red;}
-		body {background-color: #F5F5F5;}
+		body {background-color: #F5F5F5; text-align: center}
 		h2 {margin-bottom: 12px;}
 		table {margin-left: 12px;}
 		th, td { font-family: 'Courier New', Courier, monospace; font-size: 10pt; text-align: left;}
