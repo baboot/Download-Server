@@ -16,6 +16,7 @@ function getMD5File($name){
 	$base = getcwd() . DIRECTORY_SEPARATOR . $path;
 	$exts = array_filter($ext, function($e)use($name, $base){
 		$pathToFile = $base . DIRECTORY_SEPARATOR . $name . "." . $e;
+//		var_dump($pathToFile);
 		return (is_file($pathToFile));
 	});
 
@@ -29,8 +30,8 @@ function getMD5File($name){
  * @return mixed
  */
 function getMD5(){
-	global $name;
-	$path = getMD5File($name);
+	global $file;
+	$path = getMD5File($file);
 	if($path == false) return;
 	$content = array_shift(file($path));
 	return array_shift(explode(" ", $content));
@@ -41,8 +42,8 @@ function getMD5(){
  * @return mixed
  */
 function getChangeLog(){
-	global $name, $path;
-	$chLogPath = getcwd() . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $name . ".changelog";
+	global $file, $path;
+	$chLogPath = getcwd() . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $file . ".changelog";
 	return (is_file($chLogPath)) ? file_get_contents($chLogPath) : null;
 }
 
@@ -57,7 +58,6 @@ $path = implode("/",	 $temp);
 //geting filename
 $temp = explode(".", $file);
 $name = array_shift($temp);
-
 //get additional info
 $md5 	   = getMD5();
 $changeLog = getChangeLog();
@@ -115,8 +115,8 @@ print "<?xml version='1.0' encoding='utf-8'?>
  */
 ?>
 
-<h2>File Name: <?php echo $file;?></h2>
-<a class="download" href="/<?php echo $full_path;?>"?>download</a>
+<h2>File Name: <?php echo htmlentities($file);?></h2>
+<a class="download" href="/<?php echo $full_path;?>" onClick=\"ga('send', 'pageview', '<?php echo DIRECTORY_SEPARATOR . $full_path; ?>');\"?>download</a>
 
 <?php if($md5):?>
 <div class="md5">
