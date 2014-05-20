@@ -127,7 +127,7 @@ print "<?xml version='1.0' encoding='utf-8'?>
 <?php if($changeLog):?>
 <textarea><?php echo $changeLog?></textarea>
 <?php endif?>
-
+<a href="<?php echo DIRECTORY_SEPARATOR . $path?>">back</a>
 <?php 
 /**
  * Footer
