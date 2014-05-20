@@ -116,7 +116,7 @@ print "<?xml version='1.0' encoding='utf-8'?>
 ?>
 
 <h2>File Name: <?php echo htmlentities($file);?></h2>
-<a class="download" href="/<?php echo $full_path;?>" onClick=\"ga('send', 'pageview', '<?php echo DIRECTORY_SEPARATOR . $full_path; ?>');\"?>download</a>
+<a class="download" href="/<?php echo $full_path;?>" onClick=\"ga('send', 'pageview', '<?php echo DIRECTORY_SEPARATOR . $full_path; ?>');\">download</a>
 
 <?php if($md5):?>
 <div class="md5">
