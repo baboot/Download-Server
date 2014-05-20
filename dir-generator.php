@@ -325,7 +325,8 @@ print "<tr><td colspan='4' style='height:7px;'></td></tr>";
 // Print file information
 foreach($filelist as $file) {	
 	if(ignoreFile($file)) continue;
-	print "<tr><td class='n'><a href='" . addslashes($file['name']). "' onClick=\"ga('send', 'pageview', '" . $vpath . $file['name']. "');\">" .htmlentities($file['name']). "</a></td>";
+	// print "<tr><td class='n'><a href='" . addslashes($file['name']). "' onClick=\"ga('send', 'pageview', '" . $vpath . $file['name']. "');\">" .htmlentities($file['name']). "</a></td>";
+	print "<tr><td class='n'><a target='_blank' href='/get.php?p=" . urlencode($path.$file['name']). "' onClick=\"ga('send', 'pageview', '" . $vpath . $file['name']. "');\">" .htmlentities($file['name']). "</a></td>";
 	print "<td class='m'>" . date('Y-M-d H:m:s', $file['modtime'])   . "</td>";
 	print "<td class='s'>" . format_bytes($file['size'],2)           . "&nbsp;</td>";
 	print "<td class='t'>" . $file['file_type']                      . "</td></tr>";
